@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8080}
+ 
+# ---------------------------------------------------
+# Configuring the CqlSession to connect Cassandra
+# ---------------------------------------------------
+spring:
+  data:
+    cassandra:
+      contact-points: localhost:9042
+      local-datacenter: dc1
+      keyspace-name: springdemo
+      schema-action: create-if-not-exists
+
+#
+demo:
+  cassandra:
+    keyspace-replicator-factor: 3
+    
+  
+      
+     

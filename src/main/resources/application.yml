@@ -1,5 +1,0 @@
-server:
-  port: ${PORT:8080}
-  
-cassandra:
-  keyspace: springdemo

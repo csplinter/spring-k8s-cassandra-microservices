@@ -1,0 +1,23 @@
+server:
+  port: ${PORT:8080}
+ 
+# ---------------------------------------------------
+# Configuring the CqlSession to connect Cassandra
+# 
+# Leverage on convention over configuration
+# - No configuration Bean to define
+spring:
+  data:
+    cassandra:
+      contact-points: localhost:9042
+      local-datacenter: dc1
+      keyspace-name: springdemo
+      schema-action: CREATE_IF_NOT_EXISTS
+      #password:
+      #username: 
+      request:
+        page-size: 5000
+        consistency: quorum
+      connection:
+        connect-timeout: 5s
+        init-query-timeout: 500ms

@@ -1,0 +1,2 @@
+
+${AnsiColor.BLUE} + microservice-spring-data should be available on ${AnsiColor.RED}http://localhost:8080  
