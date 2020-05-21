@@ -4,15 +4,15 @@ import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
 
-import com.datastax.sample.entity.TickData;
-import com.datastax.sample.entity.TickDataKey;
+import com.datastax.sample.entity.TimeSerieDaily;
+import com.datastax.sample.entity.TimeSerieDailyKey;
 
 /**
  * Find by Symbol.
  *
  * @author Cedrick LUNVEN (@clunven)
  */
-public interface TickDataRepository extends CrudRepository<TickData, TickDataKey> { 
+public interface TickDataRepository extends CrudRepository<TimeSerieDaily, TimeSerieDailyKey> { 
     
-    List<TickData> findByTickDataKeySymbol(String symbol);
+    List<TimeSerieDaily> findByTickDataKeySourceAndTickDataKeyYyyymmdd(String symbol, String valueDate);
 }

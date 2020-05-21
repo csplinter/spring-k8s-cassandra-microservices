@@ -20,16 +20,3 @@ services:
        - ~/docker-volumes/cassandra4-single-node/:/var/lib/cassandra/data
     ulimits:
       memlock: -1
-      
-      
-#    networks:
-#      - dc1ring  
-
-#networks:
-#  dc1ring:
-#    driver: bridge          
-
-# If you want to have cqlsh
-#  docker exec -it `docker ps | grep cassandra-mgmtapi-4_0_0:v0.1.2 | cut -b 1-12` cqlsh
-   
-  

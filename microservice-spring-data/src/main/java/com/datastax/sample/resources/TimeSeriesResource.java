@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.sample.entity.TickData;
+import com.datastax.sample.entity.TimeSerieDaily;
 import com.datastax.sample.repository.TickDataRepository;
 
 import io.swagger.annotations.Api;
@@ -26,17 +26,17 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 
 /**
- * REST Resources working with {@link TickData}.
+ * REST Resources working with {@link TimeSerieDaily}.
  * This CRUD resource leverages on standard HTTP Codes and patterns.
  * 
  */
 @RestController
-@Api(value = "/api/v1/tickdata", description = "TickData Services Rest Resource")
-@RequestMapping("/api/v1/tickdata")
-public class TickDataResource {
+@Api(value = "/api/v1/timeseries", description = "TickData Services Rest Resource")
+@RequestMapping("/api/v1/timeseries")
+public class TimeSeriesResource {
 
     /** Logger for the class. */
-    private static final Logger logger = LoggerFactory.getLogger(TickDataResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimeSeriesResource.class);
     
     /** Service implementation Injection. */
     private TickDataRepository tickRepository;
@@ -47,7 +47,7 @@ public class TickDataResource {
      * @param tickRepo
      *      repository implementation
      */
-    public TickDataResource(TickDataRepository tickRepo) {
+    public TimeSeriesResource(TickDataRepository tickRepo) {
         this.tickRepository = tickRepo;
     }
     
@@ -57,7 +57,7 @@ public class TickDataResource {
      * of rows, please use Paging.
      *  
      * @return
-     *      list all {@link TickData} available in the table 
+     *      list all {@link TimeSerieDaily} available in the table 
      */
     @RequestMapping(
             method = GET,
@@ -68,12 +68,12 @@ public class TickDataResource {
     @ApiResponse(
             code = 200,
             message = "List all tick available in the table")
-    public ResponseEntity<List<TickData>> findAll() {
+    public ResponseEntity<List<TimeSerieDaily>> findAll() {
         logger.debug("Retrieving all TickData");
         // Returning an empty list is better than 204 code (meaning no valued expected)
-        List <TickData > tt= new ArrayList<>();
+        List <TimeSerieDaily > tt= new ArrayList<>();
        
-        for (TickData tick : tickRepository.findAll()) {
+        for (TimeSerieDaily tick : tickRepository.findAll()) {
             tt.add(tick);
         }
         return ResponseEntity.ok(tt);
@@ -96,14 +96,14 @@ public class TickDataResource {
     @ApiResponse(
             code = 200,
             message = "List all tick available in the table for this symbol")
-    public ResponseEntity<List<TickData>>  findBySymbol(
+    public ResponseEntity<List<TimeSerieDaily>>  findBySymbol(
             @ApiParam(name="symbol", 
                      value="symbol for a tickdata",
                      example = "TSLA",
                      required=true )
             @PathVariable(value = "symbol") String symbol) {
         logger.debug("Retrieving TickData with symbol {}", symbol);
-        return ResponseEntity.ok(tickRepository.findByTickDataKeySymbol(symbol));
+        return ResponseEntity.ok(tickRepository.findByTickDataKeySourceAndTickDataKeyYyyymmdd(symbol, "20200520"));
     }
     
     @ExceptionHandler(value = IllegalArgumentException.class)

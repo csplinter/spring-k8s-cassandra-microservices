@@ -13,25 +13,25 @@ import org.springframework.data.cassandra.core.mapping.Table;
  * @author DataStax Evangelist Team
  */
 @Table(value = "stocks_ticks")
-public class TickData implements Serializable {
+public class TimeSerieDaily implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = 6761984069893402714L;
     
     @PrimaryKey
-    private TickDataKey tickDataKey; 
+    private TimeSerieDailyKey tickDataKey; 
     
     /** value. */
     @Column
     private double value;
      
     /** Keep default. */
-    public TickData() {}
+    public TimeSerieDaily() {}
 
     /**
      * Common constructor
      */
-    public TickData(Date datetime, TickDataKey tickDataKey, double value) {
+    public TimeSerieDaily(Date datetime, TimeSerieDailyKey tickDataKey, double value) {
         this.tickDataKey = tickDataKey;
         this.value    = value;
     }
@@ -69,7 +69,7 @@ public class TickData implements Serializable {
      * @return
      *       current value of 'tickDataKey'
      */
-    public TickDataKey getTickDataKey() {
+    public TimeSerieDailyKey getTickDataKey() {
         return tickDataKey;
     }
 
@@ -78,7 +78,7 @@ public class TickData implements Serializable {
      * @param tickDataKey
      * 		new value for 'tickDataKey '
      */
-    public void setTickDataKey(TickDataKey tickDataKey) {
+    public void setTickDataKey(TimeSerieDailyKey tickDataKey) {
         this.tickDataKey = tickDataKey;
     }
 

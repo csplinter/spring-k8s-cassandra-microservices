@@ -7,16 +7,9 @@ server:
 spring:
   data:
     cassandra:
-      contact-points: localhost:9042
+      contact-points: localhost
+      port: 9042
       local-datacenter: dc1
       keyspace-name: springdemo
       schema-action: create-if-not-exists
-
-#
-demo:
-  cassandra:
-    keyspace-replicator-factor: 3
-    
-  
-      
      
