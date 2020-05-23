@@ -1,7 +1,7 @@
 # eclipse conf file
-.settings
-.classpath
-.project
+#.settings
+#.classpath
+#.project
 .cache
 
 # idea conf files
@@ -17,6 +17,6 @@ tmp
 dist
 
 # misc
-.DS_Store
+#.DS_Store
 
-.factorypath
+#.factorypath
