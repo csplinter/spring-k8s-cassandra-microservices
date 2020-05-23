@@ -2,7 +2,7 @@ server:
   port: ${PORT:8080}
  
 # ---------------------------------------------------
-# Configuring the CqlSession to connect Cassandra
+# Co
 # ---------------------------------------------------
 spring:
   data:
@@ -10,6 +10,24 @@ spring:
       contact-points: localhost
       port: 9042
       local-datacenter: dc1
-      keyspace-name: springdemo
+      keyspace-name: betterbotz
       schema-action: create-if-not-exists
+      
+springdoc:
+  api-docs:
+    enabled: true
+    groups:
+      enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+    groups-order: DESC
+  version: '@springdoc.version@'
+  show-actuator: true
+  group-configs:
+  - group: Rest Controllers (Spring MVC)
+    packages-to-scan: com.datastax.sample.resources
+  - group: Spring Data Rest
+    packages-to-scan: com.datastax.sample.repository
+  
      

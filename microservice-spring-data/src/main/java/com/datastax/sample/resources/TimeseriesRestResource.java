@@ -3,11 +3,13 @@ package com.datastax.sample.resources;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,29 +19,33 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.datastax.oss.driver.api.core.DriverException;
-import com.datastax.sample.entity.TimeSerieDaily;
-import com.datastax.sample.repository.TickDataRepository;
+import com.datastax.sample.entity.TimeserieDaily;
+import com.datastax.sample.repository.TimeseriesRepository;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
- * REST Resources working with {@link TimeSerieDaily}.
+ * REST Resources working with {@link TimeserieDaily}.
  * This CRUD resource leverages on standard HTTP Codes and patterns.
  * 
  */
 @RestController
-@Api(value = "/api/v1/timeseries", description = "TickData Services Rest Resource")
 @RequestMapping("/api/v1/timeseries")
-public class TimeSeriesResource {
+@Tag(name = "Timeseries", description = "Save ticks and search by source and day (yyyymmdd)")
+public class TimeseriesRestResource {
 
     /** Logger for the class. */
-    private static final Logger logger = LoggerFactory.getLogger(TimeSeriesResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(TimeseriesRestResource.class);
     
     /** Service implementation Injection. */
-    private TickDataRepository tickRepository;
+    @Autowired
+    private TimeseriesRepository timeseriesRepository;
 
     /**
      * Best practice : Inversion of Control through constructor and no More @Inject nor @Autowired
@@ -47,36 +53,31 @@ public class TimeSeriesResource {
      * @param tickRepo
      *      repository implementation
      */
-    public TimeSeriesResource(TickDataRepository tickRepo) {
-        this.tickRepository = tickRepo;
+    public TimeseriesRestResource(TimeseriesRepository tickRepo) {
+        this.timeseriesRepository = tickRepo;
     }
     
     /**
-     * List all tickdata in DB. Please not there is no implementation of paging. 
+     * List all tick in table. Please not there is no implementation of paging. 
      * As such result can be really large. If you query tables with large number 
      * of rows, please use Paging.
      *  
      * @return
-     *      list all {@link TimeSerieDaily} available in the table 
+     *      list all {@link TimeserieDaily} available in the table 
      */
-    @RequestMapping(
-            method = GET,
-            value = "/",
-            produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(
-            value = "List all TickData available in the table", response = List.class)
-    @ApiResponse(
-            code = 200,
-            message = "List all tick available in the table")
-    public ResponseEntity<List<TimeSerieDaily>> findAll() {
-        logger.debug("Retrieving all TickData");
-        // Returning an empty list is better than 204 code (meaning no valued expected)
-        List <TimeSerieDaily > tt= new ArrayList<>();
-       
-        for (TimeSerieDaily tick : tickRepository.findAll()) {
-            tt.add(tick);
-        }
-        return ResponseEntity.ok(tt);
+    @Operation(
+            summary = "Retrieve all values from table", 
+            description = "Name search by %name% format", 
+            tags = { "Timeseries" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" ,description = "successful operation", 
+                         content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
+    @RequestMapping(method = GET, value = "/", produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TimeserieDaily>> findAll() {
+        logger.debug("Retrieving all values for the time seire");
+        return ResponseEntity.ok(
+                StreamSupport.stream(timeseriesRepository.findAll().spliterator(), false)
+                             .collect(Collectors.toList()));
     }
     
     /**
@@ -91,19 +92,10 @@ public class TimeSeriesResource {
             value = "/{symbol}",
             method = GET,
             produces = APPLICATION_JSON_VALUE)
-    @ApiOperation(
-            value = "List all TickData available in the table for this symbol", response = List.class)
-    @ApiResponse(
-            code = 200,
-            message = "List all tick available in the table for this symbol")
-    public ResponseEntity<List<TimeSerieDaily>>  findBySymbol(
-            @ApiParam(name="symbol", 
-                     value="symbol for a tickdata",
-                     example = "TSLA",
-                     required=true )
+    public ResponseEntity<List<TimeserieDaily>>  findBySymbol(
             @PathVariable(value = "symbol") String symbol) {
         logger.debug("Retrieving TickData with symbol {}", symbol);
-        return ResponseEntity.ok(tickRepository.findByTickDataKeySourceAndTickDataKeyYyyymmdd(symbol, "20200520"));
+        return ResponseEntity.ok(timeseriesRepository.findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(symbol, "20200520"));
     }
     
     @ExceptionHandler(value = IllegalArgumentException.class)

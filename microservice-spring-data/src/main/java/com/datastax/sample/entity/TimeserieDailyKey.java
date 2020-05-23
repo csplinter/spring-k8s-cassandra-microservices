@@ -1,6 +1,7 @@
 package com.datastax.sample.entity;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
@@ -15,7 +16,7 @@ import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
  * @author Cedrick LUNVEN (@clunven)
  */
 @PrimaryKeyClass
-public class TimeSerieDailyKey implements Serializable {
+public class TimeserieDailyKey implements Serializable {
 
     /** Serial. */
     private static final long serialVersionUID = 1142109498800363080L;
@@ -40,12 +41,13 @@ public class TimeSerieDailyKey implements Serializable {
     
     /**
      * Tick Data Clustering Column
+     * time order Desc.
      */
     @PrimaryKeyColumn(name = "tick", ordinal = 0, 
             type = PrimaryKeyType.CLUSTERED, 
             ordering = Ordering.DESCENDING)
     @CassandraType(type = Name.TIMESTAMP)
-    private String tick;
+    private Instant tick;
 
     /**
      * Getter accessor for attribute 'source'.
@@ -94,6 +96,25 @@ public class TimeSerieDailyKey implements Serializable {
      */
     public static long getSerialversionuid() {
         return serialVersionUID;
+    }
+
+    /**
+     * Getter accessor for attribute 'tick'.
+     *
+     * @return
+     *       current value of 'tick'
+     */
+    public Instant getTick() {
+        return tick;
+    }
+
+    /**
+     * Setter accessor for attribute 'tick'.
+     * @param tick
+     * 		new value for 'tick '
+     */
+    public void setTick(Instant tick) {
+        this.tick = tick;
     }
     
 }

@@ -12,27 +12,27 @@ import org.springframework.data.cassandra.core.mapping.Table;
  *
  * @author DataStax Evangelist Team
  */
-@Table(value = "stocks_ticks")
-public class TimeSerieDaily implements Serializable {
+@Table(value = "timeseries_daily")
+public class TimeserieDaily implements Serializable {
     
     /** Serial. */
     private static final long serialVersionUID = 6761984069893402714L;
     
     @PrimaryKey
-    private TimeSerieDailyKey tickDataKey; 
+    private TimeserieDailyKey timeserieDailyKey; 
     
     /** value. */
     @Column
     private double value;
      
     /** Keep default. */
-    public TimeSerieDaily() {}
+    public TimeserieDaily() {}
 
     /**
      * Common constructor
      */
-    public TimeSerieDaily(Date datetime, TimeSerieDailyKey tickDataKey, double value) {
-        this.tickDataKey = tickDataKey;
+    public TimeserieDaily(Date datetime, TimeserieDailyKey tickDataKey, double value) {
+        this.timeserieDailyKey = tickDataKey;
         this.value    = value;
     }
 
@@ -40,7 +40,7 @@ public class TimeSerieDaily implements Serializable {
     @Override
     public String toString() {
         return "TickData [" +
-                "symbol=" + tickDataKey + ", " +
+                "symbol=" + timeserieDailyKey + ", " +
                 "value=" + value + "]";
     }
 
@@ -64,22 +64,22 @@ public class TimeSerieDaily implements Serializable {
     }
 
     /**
-     * Getter accessor for attribute 'tickDataKey'.
+     * Getter accessor for attribute 'timeserieDailyKey'.
      *
      * @return
-     *       current value of 'tickDataKey'
+     *       current value of 'timeserieDailyKey'
      */
-    public TimeSerieDailyKey getTickDataKey() {
-        return tickDataKey;
+    public TimeserieDailyKey getTimeserieDailyKey() {
+        return timeserieDailyKey;
     }
 
     /**
-     * Setter accessor for attribute 'tickDataKey'.
-     * @param tickDataKey
-     * 		new value for 'tickDataKey '
+     * Setter accessor for attribute 'timeserieDailyKey'.
+     * @param timeserieDailyKey
+     * 		new value for 'timeserieDailyKey '
      */
-    public void setTickDataKey(TimeSerieDailyKey tickDataKey) {
-        this.tickDataKey = tickDataKey;
+    public void setTimeserieDailyKey(TimeserieDailyKey timeserieDailyKey) {
+        this.timeserieDailyKey = timeserieDailyKey;
     }
 
 }

@@ -3,10 +3,10 @@ package com.datastax.sample.conf;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.cassandra.CqlSessionBuilderCustomizer;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.config.AbstractSessionConfiguration;
 import org.springframework.data.cassandra.config.SchemaAction;
@@ -14,19 +14,18 @@ import org.springframework.data.cassandra.core.cql.keyspace.CreateKeyspaceSpecif
 import org.springframework.data.cassandra.core.cql.keyspace.DataCenterReplication;
 import org.springframework.data.cassandra.core.cql.keyspace.KeyspaceOption;
 import org.springframework.data.cassandra.core.cql.session.init.KeyspacePopulator;
-import org.springframework.data.cassandra.core.cql.session.init.ScriptException;
+import org.springframework.data.cassandra.core.cql.session.init.ResourceKeyspacePopulator;
 
-import com.datastax.oss.driver.api.core.CqlSession;
-import com.datastax.oss.driver.api.core.metadata.Node;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import com.datastax.sample.SpringDataApplication;
 
 /**
  * Configuration Cassandra Driver <-> Spring Data.
  * 
- * With Spring Data you can either use convention only an define proper keys
- * in application.yaml or use JavaConfig and extend {@link AbstractCassandraConfiguration}
+ * This Full java config approach is all about overriding method from
+ * {@link AbstractCassandraConfiguration} but we have no access to CqlSession creation
  * 
- * Here we choose the Java Config.
+ * #FIX: I got timeout issue for Keyspace creation and no access to request timeout objects
  *
  * @see AbstractSessionConfiguration
  * @see AbstractCassandraConfiguration
@@ -34,10 +33,7 @@ import com.datastax.sample.SpringDataApplication;
  * @author Cedrick LUNVEN (@clunven)
  */
 @Configuration
-public class CassandraConfig extends AbstractCassandraConfiguration {
-   
-    /** Logger for the class. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(CassandraConfig.class);
+public class SpringDataCassandraJavaConfig extends AbstractCassandraConfiguration implements CqlSessionBuilderCustomizer {
     
     @Value("${spring.data.cassandra.keyspace-name:springdemo}")
     private String keyspaceName;
@@ -71,6 +67,11 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     protected int getPort() {
         return port;
     }
+    /** {@inheritDoc} */
+    @Override
+    public void customize(CqlSessionBuilder cqlSessionBuilder) {
+        //cqlSessionBuilder.
+    }
     
     /** {@inheritDoc} */
     @Override
@@ -85,7 +86,7 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     /** {@inheritDoc} */
     @Override
     public String[] getEntityBasePackages() {
-        return new String[]{ SpringDataApplication.class.getPackageName() };
+        return new String[]{ SpringDataApplication.class.getPackageName() + ".entity" };
     }
     
     /** {@inheritDoc} */
@@ -97,18 +98,11 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     /** {@inheritDoc} */
     @Override
     protected KeyspacePopulator keyspacePopulator() {
-        return new KeyspacePopulator() {
-            /** {@inheritDoc} */
-            @Override
-            public void populate(CqlSession cqlSession) throws ScriptException {
-                for (Node host : cqlSession.getMetadata().getNodes().values()) {
-                    LOGGER.info("+ '{}/{}': ip='{}',listen='{}'", 
-                            host.getDatacenter(), host.getRack(),
-                            host.getBroadcastAddress().orElse(null),
-                            host.getListenAddress().orElse(null));
-                }
-            }
-        };
+        ResourceKeyspacePopulator keyspacePopulate = new ResourceKeyspacePopulator();
+        keyspacePopulate.setSeparator(";");
+        keyspacePopulate.setScripts(new ClassPathResource("sample-data.cql"));
+        return keyspacePopulate;
     }
+    
 
 }
