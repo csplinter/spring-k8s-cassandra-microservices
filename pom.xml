@@ -37,8 +37,10 @@
 	</properties>
 
 	<modules>
-		<module>microservice-spring-data</module>
 		<module>microservice-spring-boot</module>
+		<module>microservice-spring-boot-reactive</module>
+		<module>microservice-spring-data</module>
+		<module>microservice-spring-data-reactive</module>
 	</modules>
 
 	<dependencyManagement>

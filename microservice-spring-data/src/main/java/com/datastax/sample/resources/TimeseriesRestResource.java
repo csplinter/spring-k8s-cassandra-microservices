@@ -66,7 +66,7 @@ public class TimeseriesRestResource {
      *      list all {@link TimeserieDaily} available in the table 
      */
     @Operation(
-            summary = "Retrieve all values from table", 
+            summary = "Retrieve the complete table", 
             description = "Name search by %name% format", 
             tags = { "Timeseries" })
     @ApiResponses(value = {
@@ -81,22 +81,57 @@ public class TimeseriesRestResource {
     }
     
     /**
-     * Retrieve TickData list for a symbol
+     * Retrieve the timeseries for current day
+     *
+     * @param source
+     *      unique source
+     * @return
+     *      list of tickData
+     */
+    @Operation(
+            summary = "Retrieve a serie for today", 
+            description = "Retrieve a serie from %source% for today", 
+            tags = { "Timeseries" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" ,description = "successful operation", 
+                         content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
+    @RequestMapping(
+            value = "/{source}",
+            method = GET,
+            produces = APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<TimeserieDaily>>  findSerieToday(
+            @PathVariable(value = "source") String source) {
+        logger.info("Search serie for today and source '{}'", source);
+        return ResponseEntity.ok(timeseriesRepository.findTimeSeriesToday(source));
+    }
+    
+    /**
+     * Retrieve the timeseries for defined day by yyyymmdd
      *
      * @param symbol
      *      unique symbol
      * @return
      *      list of tickData
      */
+    @Operation(
+            summary = "Retrieve a serie for a defined day", 
+            description = "Retrieve a serie from %source% and day %yyyymmdd%", 
+            tags = { "Timeseries" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" ,description = "successful operation", 
+                         content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
     @RequestMapping(
-            value = "/{symbol}",
+            value = "/{source}/{yyyymmdd}",
             method = GET,
             produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TimeserieDaily>>  findBySymbol(
-            @PathVariable(value = "symbol") String symbol) {
-        logger.debug("Retrieving TickData with symbol {}", symbol);
-        return ResponseEntity.ok(timeseriesRepository.findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(symbol, "20200520"));
+    public ResponseEntity<List<TimeserieDaily>>  findSerieADay(
+            @PathVariable(value = "source") String source, 
+            @PathVariable(value = "yyyymmdd") String yyyymmdd) {
+        logger.info("Retrieving timeserie with symbol {}", source);
+        return ResponseEntity.ok(timeseriesRepository.findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, yyyymmdd));
     }
+    
+    
     
     @ExceptionHandler(value = IllegalArgumentException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
