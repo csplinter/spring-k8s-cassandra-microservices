@@ -22,12 +22,13 @@ springdoc:
     path: /swagger-ui.html
     display-request-duration: true
     groups-order: DESC
-  version: '@springdoc.version@'
+  version: 1.0-SNAPSHOT
   show-actuator: true
   group-configs:
   - group: Rest Controllers (Spring MVC)
     packages-to-scan: com.datastax.sample.resources
-  - group: Spring Data Rest
-    packages-to-scan: com.datastax.sample.repository
+# KO
+#  - group: Spring Data Rest
+#    packages-to-scan: com.datastax.sample.repository
   
      

@@ -64,28 +64,6 @@ public class TimeseriesRestResource {
         this.timeseriesRepository = tickRepo;
     }
     
-    /**
-     * List all tick in table. Please not there is no implementation of paging. 
-     * As such result can be really large. If you query tables with large number 
-     * of rows, please use Paging.
-     *  
-     * @return
-     *      list all {@link TimeserieDaily} available in the table 
-     */
-    @Operation(
-            summary = "Retrieve the complete table", 
-            description = "Name search by %name% format", 
-            tags = { "Timeseries" })
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" ,description = "successful operation", 
-                         content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
-    @RequestMapping(method = GET, value = "/", produces = APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TimeserieDaily>> findAll() {
-        logger.debug("Retrieving all values for the time seire");
-        return ResponseEntity.ok(
-                StreamSupport.stream(timeseriesRepository.findAll().spliterator(), false)
-                             .collect(Collectors.toList()));
-    }
     
     /**
      * Retrieve the timeseries for current day
@@ -148,8 +126,8 @@ public class TimeseriesRestResource {
      *      list of tickData
      */
     @Operation(
-            summary = "Retrieve a serie for a defined day", 
-            description = "Retrieve a serie from %source% and day %yyyymmdd%", 
+            summary = "Save a new value for on source", 
+            description = "tick and yyyymmdd are computed at insertion", 
             tags = { "Timeseries" })
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201" ,description = "successful operation", 
