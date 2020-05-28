@@ -1,7 +1,6 @@
 package com.datastax.sample.repository;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.springframework.data.repository.CrudRepository;
@@ -16,8 +15,6 @@ import com.datastax.sample.entity.TimeserieDailyKey;
  */
 public interface TimeseriesRepository extends CrudRepository<TimeserieDaily, TimeserieDailyKey> { 
     
-    DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyymmdd");
-    
     /**
      * I want to die
      */
@@ -27,6 +24,7 @@ public interface TimeseriesRepository extends CrudRepository<TimeserieDaily, Tim
      * Get the serie for today, no paging.
      */
     default List<TimeserieDaily> findTimeSeriesToday(String source) {
-        return findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, YYYYMMDD.format(LocalDate.now()));
+        return findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, 
+                TimeserieDailyKey.YYYYMMDD.format(LocalDate.now()));
     }
 }

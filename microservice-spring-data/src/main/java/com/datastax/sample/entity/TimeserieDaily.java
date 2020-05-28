@@ -1,7 +1,7 @@
 package com.datastax.sample.entity;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 import org.springframework.data.cassandra.core.mapping.Column;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
@@ -31,7 +31,16 @@ public class TimeserieDaily implements Serializable {
     /**
      * Common constructor
      */
-    public TimeserieDaily(Date datetime, TimeserieDailyKey tickDataKey, double value) {
+    public TimeserieDaily(String source, double value) {
+        Instant now = Instant.now();
+        this.timeserieDailyKey = new TimeserieDailyKey(source, TimeserieDailyKey.YYYYMMDD.format(now), now);
+        this.value             = value;
+    }
+    
+    /**
+     * Common constructor
+     */
+    public TimeserieDaily(TimeserieDailyKey tickDataKey, double value) {
         this.timeserieDailyKey = tickDataKey;
         this.value    = value;
     }

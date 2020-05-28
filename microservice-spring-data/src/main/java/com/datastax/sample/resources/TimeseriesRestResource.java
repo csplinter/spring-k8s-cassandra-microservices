@@ -1,11 +1,17 @@
 package com.datastax.sample.resources;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
+import java.net.URI;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,8 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.datastax.oss.driver.api.core.DriverException;
 import com.datastax.sample.entity.TimeserieDaily;
@@ -33,7 +41,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 /**
  * REST Resources working with {@link TimeserieDaily}.
  * This CRUD resource leverages on standard HTTP Codes and patterns.
- * 
  */
 @RestController
 @RequestMapping("/api/v1/timeseries")
@@ -131,7 +138,42 @@ public class TimeseriesRestResource {
         return ResponseEntity.ok(timeseriesRepository.findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, yyyymmdd));
     }
     
-    
+    /**
+     * Insert a new value for a time series. Preferred to 
+     * PUT as the full URL is not known
+     *
+     * @param symbol
+     *      unique symbol
+     * @return
+     *      list of tickData
+     */
+    @Operation(
+            summary = "Retrieve a serie for a defined day", 
+            description = "Retrieve a serie from %source% and day %yyyymmdd%", 
+            tags = { "Timeseries" })
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201" ,description = "successful operation", 
+                         content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
+    @RequestMapping(
+            method = POST,
+            value = "/", 
+            consumes = APPLICATION_JSON_VALUE,
+            produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<Instant>  save(
+            HttpServletRequest request,
+            @RequestParam("source") String source, 
+            @RequestParam("value") Double value) {
+        TimeserieDaily record = new TimeserieDaily(source, value);
+        timeseriesRepository.save(record);
+        URI location = ServletUriComponentsBuilder.fromRequestUri(request)
+                .replacePath("/api/v1/timeseries/{source}/{yyyymmdd}")
+                .buildAndExpand(
+                        record.getTimeserieDailyKey().getSource(), 
+                        record.getTimeserieDailyKey().getYyyymmdd())
+                .toUri();
+        // HTTP 201 with confirmation number
+        return ResponseEntity.created(location).body(record.getTimeserieDailyKey().getTick());
+    }
     
     @ExceptionHandler(value = IllegalArgumentException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)

@@ -2,6 +2,7 @@ package com.datastax.sample.entity;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.data.cassandra.core.cql.Ordering;
 import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
@@ -21,34 +22,38 @@ public class TimeserieDailyKey implements Serializable {
     /** Serial. */
     private static final long serialVersionUID = 1142109498800363080L;
     
-    /**
-     * Tick Data Partition Key
-     */
-    @PrimaryKeyColumn(name = "source", 
-            ordinal = 0, 
-            type = PrimaryKeyType.PARTITIONED)
+    /** Key Formatter. */
+    public static final DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyymmdd");
+    
+    /** Tick Data Partition Key. */
+    @PrimaryKeyColumn(name = "source", ordinal = 0,type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = Name.TEXT)
     private String source;
-    
-    /**
-     * Tick Data Clustering Column
-     */
-    @PrimaryKeyColumn(name = "yyyymmdd", 
-            ordinal = 1, 
-            type = PrimaryKeyType.PARTITIONED)
+
+    /** Tick Data Clustering Column. */
+    @PrimaryKeyColumn(name = "yyyymmdd", ordinal = 1, type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = Name.TEXT)
     private String yyyymmdd;
     
-    /**
-     * Tick Data Clustering Column
-     * time order Desc.
-     */
-    @PrimaryKeyColumn(name = "tick", ordinal = 0, 
-            type = PrimaryKeyType.CLUSTERED, 
-            ordering = Ordering.DESCENDING)
+    /** Tick Data Clustering Column (time order Desc). */
+    @PrimaryKeyColumn(name = "tick", type = PrimaryKeyType.CLUSTERED, ordering = Ordering.DESCENDING)
     @CassandraType(type = Name.TIMESTAMP)
     private Instant tick;
 
+    /**
+     * Constructor.
+     *
+     * @param source
+     * @param yyyymmdd
+     * @param tick
+     */
+    public TimeserieDailyKey(String source, String yyyymmdd, Instant tick) {
+        super();
+        this.source     = source;
+        this.yyyymmdd   = yyyymmdd;
+        this.tick       = tick;
+    }
+    
     /**
      * Getter accessor for attribute 'source'.
      *
