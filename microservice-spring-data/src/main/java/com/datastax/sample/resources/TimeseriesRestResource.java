@@ -86,8 +86,7 @@ public class TimeseriesRestResource {
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TimeserieDaily>>  findSerieToday(
             @PathVariable(value = "source") 
-            @Parameter(allowEmptyValue = false, 
-                       description = "Source of events", 
+            @Parameter(allowEmptyValue = false, description = "Source for events", 
                        name = "source", example = "sensor_X")
             String source) {
         logger.info("Search serie for today and source '{}'", source);
@@ -114,8 +113,15 @@ public class TimeseriesRestResource {
             method = GET,
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TimeserieDaily>>  findSerieADay(
-            @PathVariable(value = "source") String source, 
-            @PathVariable(value = "yyyymmdd") String yyyymmdd) {
+            @PathVariable(value = "source") 
+            @Parameter(allowEmptyValue = false, description = "Source for events", 
+            name = "source", example = "sensor_X")
+            String source, 
+            
+            @PathVariable(value = "yyyymmdd") 
+            @Parameter(allowEmptyValue = false, description = "Filter by day for yyyymmdd", 
+            name = "yyyymmdd", example = "20200501")
+            String yyyymmdd) {
         logger.info("Retrieving timeserie with symbol {}", source);
         return ResponseEntity.ok(timeseriesRepository.findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, yyyymmdd));
     }
@@ -141,10 +147,18 @@ public class TimeseriesRestResource {
             value = "/", 
             consumes = APPLICATION_JSON_VALUE,
             produces = TEXT_PLAIN_VALUE)
-    public ResponseEntity<Instant>  save(
-            HttpServletRequest request,
-            @RequestParam("source") String source, 
-            @RequestParam("value") Double value) {
+    public ResponseEntity<Instant>  save(HttpServletRequest request,
+            
+            @RequestParam("source") 
+            @Parameter(allowEmptyValue = false, description = "Source for events", 
+            name = "source", example = "sensor_X")
+            String source,
+            
+            @RequestParam("value") 
+            @Parameter(allowEmptyValue = false, description = "Metric registered", 
+            name = "value", example = "0.1")
+            Double value) {
+        
         TimeserieDaily record = new TimeserieDaily(source, value);
         timeseriesRepository.save(record);
         URI location = ServletUriComponentsBuilder.fromRequestUri(request)
@@ -157,6 +171,13 @@ public class TimeseriesRestResource {
         return ResponseEntity.created(location).body(record.getTimeserieDailyKey().getTick());
     }
     
+    /**
+     * Converts {@link IllegalArgumentException} into HTTP 400 bad parameter
+     * the response body.
+     *
+     * @param e The {@link DriverException}.
+     * @return The error message to be used as response body.
+     */
     @ExceptionHandler(value = IllegalArgumentException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public String _errorBadRequestHandler(IllegalArgumentException ex) {
@@ -164,7 +185,7 @@ public class TimeseriesRestResource {
     }
     
     /**
-     * Converts {@link DriverException}s into HTTP 500 error codes and outputs the error message as
+     * Converts {@link DriverException} into HTTP 500 error codes and outputs the error message as
      * the response body.
      *
      * @param e The {@link DriverException}.

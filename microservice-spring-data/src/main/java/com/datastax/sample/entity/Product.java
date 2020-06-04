@@ -4,10 +4,11 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
+import org.springframework.data.cassandra.core.cql.PrimaryKeyType;
 import org.springframework.data.cassandra.core.mapping.CassandraType;
 import org.springframework.data.cassandra.core.mapping.CassandraType.Name;
 import org.springframework.data.cassandra.core.mapping.Column;
-import org.springframework.data.cassandra.core.mapping.PrimaryKey;
+import org.springframework.data.cassandra.core.mapping.PrimaryKeyColumn;
 import org.springframework.data.cassandra.core.mapping.Table;
 
 /**
@@ -20,14 +21,14 @@ public class Product implements Serializable {
     
     /** Serial for the class. */
     private static final long serialVersionUID = -5844442448334944278L;
-
-    @PrimaryKey("name")
-    @CassandraType(type = Name.TEXT)
-    private String name;
     
-    @Column("id")
+    @PrimaryKeyColumn(name = "id", ordinal = 0, type = PrimaryKeyType.PARTITIONED)
     @CassandraType(type = Name.UUID)
     private UUID id;
+    
+    @Column("name")
+    @CassandraType(type = Name.TEXT)
+    private String name;
     
     @Column("description")
     @CassandraType(type = Name.TEXT)

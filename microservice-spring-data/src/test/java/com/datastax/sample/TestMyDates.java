@@ -13,8 +13,8 @@ public class TestMyDates {
     @Test
     @DisplayName("Date format should work")
     public void should_format_yyyymmdd() {
-        LocalDateTime sampleDate = LocalDateTime.of(2020, 06, 01, 00, 00);
-        Assertions.assertEquals("20200601", TimeserieDailyKey.YYYYMMDD.format(sampleDate));
+        Assertions.assertEquals("20200601", 
+                TimeserieDailyKey.YYYYMMDD.format(LocalDateTime.of(2020, 06, 01, 00, 00)));
     }
 
 }
