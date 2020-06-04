@@ -8,8 +8,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import java.net.URI;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +29,7 @@ import com.datastax.sample.entity.TimeserieDaily;
 import com.datastax.sample.repository.TimeseriesRepository;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -75,17 +74,22 @@ public class TimeseriesRestResource {
      */
     @Operation(
             summary = "Retrieve a serie for today", 
-            description = "Retrieve a serie from %source% for today", 
+            description = "Retrieve a serie based on source for today", 
             tags = { "Timeseries" })
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200" ,description = "successful operation", 
+            @ApiResponse(responseCode = "200",
+                         description = "successful operation", 
                          content = @Content(array = @ArraySchema(schema = @Schema(implementation = TimeserieDaily.class)))) })  
     @RequestMapping(
             value = "/{source}",
             method = GET,
             produces = APPLICATION_JSON_VALUE)
     public ResponseEntity<List<TimeserieDaily>>  findSerieToday(
-            @PathVariable(value = "source") String source) {
+            @PathVariable(value = "source") 
+            @Parameter(allowEmptyValue = false, 
+                       description = "Source of events", 
+                       name = "source", example = "sensor_X")
+            String source) {
         logger.info("Search serie for today and source '{}'", source);
         return ResponseEntity.ok(timeseriesRepository.findTimeSeriesToday(source));
     }

@@ -23,7 +23,7 @@ public class TimeserieDailyKey implements Serializable {
     private static final long serialVersionUID = 1142109498800363080L;
     
     /** Key Formatter. */
-    public static final DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyymmdd");
+    public static final DateTimeFormatter YYYYMMDD = DateTimeFormatter.ofPattern("yyyyMMdd");
     
     /** Tick Data Partition Key. */
     @PrimaryKeyColumn(name = "source", ordinal = 0,type = PrimaryKeyType.PARTITIONED)

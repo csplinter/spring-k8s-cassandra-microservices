@@ -33,31 +33,20 @@ import com.datastax.sample.SpringDataApplication;
  * @author Cedrick LUNVEN (@clunven)
  */
 @Configuration
-public class SpringDataCassandraJavaConfig extends AbstractCassandraConfiguration implements CqlSessionBuilderCustomizer {
+public class SpringDataCassandraJavaConfig 
+                extends AbstractCassandraConfiguration 
+                implements CqlSessionBuilderCustomizer {
     
-    @Value("${spring.data.cassandra.keyspace-name:springdemo}")
-    private String keyspaceName;
-    
-    @Value("${spring.data.cassandra.local-datacenter:dc1}")
-    private String localDataCenter;
-    
-    @Value("${spring.data.cassandra.contact-point:localhost}")
-    private String contactPoints;
-    
-    @Value("${spring.data.cassandra.port:9042}")
-    private int port;
-    
-    /** {@inheritDoc} */
     @Override
     protected String getKeyspaceName() {
         return keyspaceName;
     }
-    /** {@inheritDoc} */
+    
     @Override
     protected String getLocalDataCenter() {
         return localDataCenter;
     }
-    /** {@inheritDoc} */
+    
     @Override
     protected String getContactPoints() {
         return contactPoints;
@@ -71,7 +60,20 @@ public class SpringDataCassandraJavaConfig extends AbstractCassandraConfiguratio
     @Override
     public void customize(CqlSessionBuilder cqlSessionBuilder) {
         //cqlSessionBuilder.
+        // Here you define the SecureCloudConnectBundle for ASTRA
     }
+    
+    @Value("${spring.data.cassandra.keyspace-name:springdemo}")
+    private String keyspaceName;
+    
+    @Value("${spring.data.cassandra.local-datacenter:dc1}")
+    private String localDataCenter;
+    
+    @Value("${spring.data.cassandra.contact-point:localhost}")
+    private String contactPoints;
+    
+    @Value("${spring.data.cassandra.port:9042}")
+    private int port;
     
     /** {@inheritDoc} */
     @Override

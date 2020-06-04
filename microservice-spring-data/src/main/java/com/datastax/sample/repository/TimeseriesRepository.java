@@ -1,9 +1,9 @@
 package com.datastax.sample.repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.cassandra.repository.CassandraRepository;
 
 import com.datastax.sample.entity.TimeserieDaily;
 import com.datastax.sample.entity.TimeserieDailyKey;
@@ -13,11 +13,8 @@ import com.datastax.sample.entity.TimeserieDailyKey;
  *
  * @author Cedrick LUNVEN (@clunven)
  */
-public interface TimeseriesRepository extends CrudRepository<TimeserieDaily, TimeserieDailyKey> { 
+public interface TimeseriesRepository extends CassandraRepository<TimeserieDaily, TimeserieDailyKey> { 
     
-    /**
-     * I want to die
-     */
     List<TimeserieDaily> findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(String symbol, String valueDate);
     
     /**
@@ -25,6 +22,6 @@ public interface TimeseriesRepository extends CrudRepository<TimeserieDaily, Tim
      */
     default List<TimeserieDaily> findTimeSeriesToday(String source) {
         return findByTimeserieDailyKeySourceAndTimeserieDailyKeyYyyymmdd(source, 
-                TimeserieDailyKey.YYYYMMDD.format(LocalDate.now()));
+                TimeserieDailyKey.YYYYMMDD.format(LocalDateTime.now()));
     }
 }
