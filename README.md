@@ -4,37 +4,37 @@ In May 2020, the Spring engineering teams released Spring Boot 2.3.0 and Spring 
 
 #### Contributors: 
 - [Cedrick Lunven](https://github.com/clun) - twitter handdle [@clun](https://twitter.com/clunven)
-- [Chris Splinter](https://github.com/csplinter) - twitter handle [@]()
+- [Chris Splinter](https://github.com/csplinter)
 - [Frank Moley](https://github.com/fpmoles) - twitter handle [@]()
 
 #### Modules:
-- `microservice-spring-boot` : 
-   - **Persistence Layer** : repository using explicitly `CqlSession` and java driver Object Mapper. 
-   - **Exposition Layer** : Rest Controllers wih spring-mvc  `@Controller`
+- `microservice-spring-boot`: Service for Product table
+   - **Persistence Layer** : ProductDao uses the Cassandra Java driver's `CqlSession` directly.
+   - **Exposition Layer** : Rest Controllers wih `spring-mvc`  `@Controller`
    - **Documentation** : OpenApi3 and SpringDoc
-- `microservice-spring-boot-reactive` : 
-   - **Persistence Layer** : repository using explicitly `CqlSession` and java driver Object Mapper. 
-   - **Exposition Layer** : Reactive Endpoints wih Spring Web Flux.
-- `microservice-spring-data` : *fully embrace the spring approach with Spring Data*
-  - **Persistence Layer** : Spring Data `CrudRepository<K,V>`
+- `microservice-spring-data`: Service for Orders table
+  - **Persistence Layer** : Spring Data `CassandraRepository`
   - **Exposition Layer** : Spring-Data-Rest
-- `microservice-spring-data-reactive` :
-  - **Persistence Layer** : Spring Data `ReactiveCrudRepository<K,V>`
-  - **Exposition Layer** :Spring Web Flux
+- `gateway-service`: Route requests between the microservices
 
 ## 1. Objectives
 
-This a fully working set of microservices illustrating how to implements microservices on top of Apache Cassandra leveraging Spring modules : `spring-data`,  `spring-boot`,  `spring-data-rest`,  `spring-webmvc`, `spring-security` both synchronous and reactive REST API with DataStax java driver (`CqlSession`)
+This a fully working set of microservices illustrating how to build Spring microservices with Apache Cassandra and Kubernetes.
+This repo leverages Spring modules :
+- `spring-data`
+- `spring-boot`
+- `spring-data-rest`
+- `spring-webmvc`
+- `spring-cloud-kubernetes`
+- `spring-cloud-gateway`
 
 ## 2. How this Works
 
-All external componenets are started using the `docker-compose` or the Kubernetes `yaml` deployment file. This can include a 3 nodes cluster for Cassandra or use ATRA Cassandra as a service by DataStax.
+All external components are started using the `docker-compose` or the Kubernetes `yaml` deployment file. This can include a 3 nodes cluster for Cassandra or use DataStax's Astra.
 
 The component expose all the same service, idea is to demonstrate multiple implementations strategies. The business domain is better botz the pilot application in ASTRA Showcases.
 
 Each module is a standalone REST API providing Its own documentation using Swageger/OpenAPI when this is possible. Each module listen on a dedicated port if you want to run all them at once.
-
-
 
 ## 3. Setup and Running
 
