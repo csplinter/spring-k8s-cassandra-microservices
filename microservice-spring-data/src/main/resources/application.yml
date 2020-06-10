@@ -1,37 +1,18 @@
 spring.application.name: spring-data-service
 
-server:
-  port: 8081
+server.port: 8081
 
-management:
-  server:
-    port: 8082
+management.server.port: 8082
 
 spring:
   data:
     cassandra:
       port: 9042
       keyspace-name: betterbotz
-      contact-points: host.docker.internal
-      local-datacenter: datastax-desktop
+      local-datacenter: localhost
       schema-action: create-if-not-exists
     rest:
       basePath: /api
-
-springdoc:
-  api-docs:
-    enabled: true
-    groups:
-      enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    display-request-duration: true
-    groups-order: DESC
-  version: 1.0-SNAPSHOT
-  show-actuator: true
-  group-configs:
-  - group: Rest Controllers (Spring MVC)
-    packages-to-scan: com.datastax.examples.resources
 
 ---
 spring.profiles: kubernetes

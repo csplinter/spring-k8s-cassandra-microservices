@@ -1,4 +1,4 @@
-FROM openjdk:11.0.1-jre-slim-stretch
+FROM openjdk:11.0.7-jre-slim-buster
 EXPOSE 8081
 EXPOSE 8082
 WORKDIR /app

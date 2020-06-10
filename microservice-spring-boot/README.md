@@ -63,21 +63,21 @@ Test the endpoints with curl
 
 Add products
 ```
-curl -X POST -H "Content-Type: application/json" -d '{"name": "mobile", "id":"123e4567-e89b-12d3-a456-556642440000", "description":"iPhone", "price":"500.00"}' <replace-with-url>/api/add/product
-curl -X POST -H "Content-Type: application/json" -d '{"name": "mobile", "id":"123e4567-e89b-12d3-a456-556642440001", "description":"Android", "price":"600.00"}' <replace-with-url>/api/add/product
+curl -X POST -H "Content-Type: application/json" -d '{"name": "mobile", "id":"123e4567-e89b-12d3-a456-556642440000", "description":"iPhone", "price":"500.00"}' <replace-with-url>/api/products/add
+curl -X POST -H "Content-Type: application/json" -d '{"name": "mobile", "id":"123e4567-e89b-12d3-a456-556642440001", "description":"Android", "price":"600.00"}' <replace-with-url>/api/products/add
 ```
 
 Get products with name = mobile
 ```
-curl <replace-with-url>/api/search/product/mobile
+curl <replace-with-url>/api/products/search/mobile
 ```
 
 Get products with name = mobile and id = 123e4567-e89b-12d3-a456-556642440001
 ```
-curl <replace-with-url>/api/search/product/mobile/123e4567-e89b-12d3-a456-556642440001
+curl <replace-with-url>/api/products/search/mobile/123e4567-e89b-12d3-a456-556642440001
 ```
 
 Delete product with name = mobile and id = 123e4567-e89b-12d3-a456-556642440001
 ```
-curl -X DELETE <replace-with-url>/api/delete/product/mobile/123e4567-e89b-12d3-a456-556642440001
+curl -X DELETE <replace-with-url>/api/products/delete/mobile/123e4567-e89b-12d3-a456-556642440001
 ```

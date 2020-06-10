@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: spring-data-service
 data:
-  spring.data.cassandra.contact-points: host.docker.internal
+  application.yml: |-
+    cassandra.contact-points: cluster1-dc1-service.cass-operator

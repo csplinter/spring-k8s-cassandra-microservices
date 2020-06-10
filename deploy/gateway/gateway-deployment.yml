@@ -2,16 +2,16 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: spring-data-service
-  name: spring-data-service
+    app: gateway-service
+  name: gateway-service
 spec:
   selector:
     matchLabels:
-      app: spring-data-service
+      app: gateway-service
   template:
     metadata:
       labels:
-        app: spring-data-service
+        app: gateway-service
     spec:
       containers:
         - env:
@@ -21,24 +21,14 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: DB_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: username
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: password
-          image: csplinter/spring-data-service:1.0.0-SNAPSHOT
+          image: csplinter/gateway-service:1.0.0-SNAPSHOT
           imagePullPolicy: Never
-          name: spring-data-service
+          name: gateway-service
           ports:
             - name: http
-              containerPort: 8081
+              containerPort: 8080
             - name: actuator
-              containerPort: 8082
+              containerPort: 8085
           livenessProbe:
             httpGet:
               path: /actuator/health
